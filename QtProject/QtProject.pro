@@ -10,13 +10,16 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mytable.cpp
+    mytable.cpp \
+    tableoptions.cpp
 
 HEADERS += \
-    mytable.h
+    mytable.h \
+    tableoptions.h
 
 FORMS += \
-    mytable.ui
+    mytable.ui \
+    tableoptions.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
