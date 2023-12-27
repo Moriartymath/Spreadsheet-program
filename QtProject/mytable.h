@@ -25,6 +25,9 @@ private slots:
     void CloseMyTab(int indexTab);
     void on_actionInfo_triggered();
 
+signals:
+    void EmitOpenTableOptionsDialog();
+
 private:
     Ui::MyTable *ui;
 };

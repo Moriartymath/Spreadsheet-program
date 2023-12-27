@@ -9,9 +9,9 @@ int main(int argc, char *argv[])
     MyTable w;
     w.show();
 
-    TableOptions options;
+    TableOptions opt_table{&w};
 
-    options.show();
+    QObject::connect(&w,SIGNAL(EmitOpenTableOptionsDialog()),&opt_table,SLOT(SlotOpenTableOptionsDialog()));
 
     return a.exec();
 }

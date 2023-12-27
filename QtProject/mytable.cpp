@@ -36,6 +36,7 @@ void MyTable::HandleRightClick()
 
     switch (reply) {
     case QMessageBox::Yes:
+        emit EmitOpenTableOptionsDialog();
         break;
     case QMessageBox::No:
         break;

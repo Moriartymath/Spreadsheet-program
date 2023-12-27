@@ -29,3 +29,27 @@ void TableOptions::SetPlaceHolderText()
     }
 
 }
+
+void TableOptions::SlotOpenTableOptionsDialog()
+{
+    setModal(true);
+    show();
+}
+
+void TableOptions::on_continue_button_clicked()
+{
+    for (QComboBox* combo_box : {ui->Horiz_headers,ui->Vert_headers,(QComboBox*)ui->fontComboBox})
+    {
+        if(combo_box->currentIndex() != (-1))
+        {
+            qDebug() << combo_box->currentText();
+        }
+    }
+}
+
+
+void TableOptions::on_cancel_button_clicked()
+{
+    close();
+}
+

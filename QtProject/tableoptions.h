@@ -17,6 +17,13 @@ public:
 private:
     void SetPlaceHolderText();
 
+private slots:
+    void SlotOpenTableOptionsDialog();
+
+    void on_continue_button_clicked();
+
+    void on_cancel_button_clicked();
+
 private:
     Ui::TableOptions *ui;
 };

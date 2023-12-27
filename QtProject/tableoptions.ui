@@ -47,11 +47,32 @@
       </property>
       <property name="currentFont">
        <font>
-        <family>Courier New</family>
+        <family>Arial</family>
         <strikeout>false</strikeout>
         <stylestrategy>PreferDefault</stylestrategy>
         <kerning>false</kerning>
        </font>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QSpinBox" name="spinBox">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::WheelFocus</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>200</number>
       </property>
      </widget>
     </item>
@@ -108,28 +129,71 @@
       </item>
      </widget>
     </item>
+    <item row="5" column="0">
+     <widget class="QSpinBox" name="spinBox_2">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="LinkVisited">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>199</red>
+            <green>216</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="LinkVisited">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>199</red>
+            <green>216</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="LinkVisited">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>199</red>
+            <green>216</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="wrapping">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+      <property name="buttonSymbols">
+       <enum>QAbstractSpinBox::PlusMinus</enum>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>200</number>
+      </property>
+     </widget>
+    </item>
    </layout>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_3">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>20</y>
-     <width>231</width>
-     <height>351</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
@@ -167,7 +231,32 @@
     </item>
    </layout>
   </widget>
+  <widget class="QLabel" name="label_picture">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>0</y>
+     <width>231</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">image:url(:/Images/testimage.jpg)</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>Horiz_headers</tabstop>
+  <tabstop>Vert_headers</tabstop>
+  <tabstop>fontComboBox</tabstop>
+  <tabstop>spinBox</tabstop>
+  <tabstop>spinBox_2</tabstop>
+  <tabstop>continue_button</tabstop>
+  <tabstop>cancel_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
