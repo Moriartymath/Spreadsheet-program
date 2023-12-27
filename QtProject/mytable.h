@@ -15,6 +15,9 @@ public:
     MyTable(QWidget *parent = nullptr);
     ~MyTable();
 
+private slots:
+    void on_actionQuit_triggered();
+
 private:
     Ui::MyTable *ui;
 };

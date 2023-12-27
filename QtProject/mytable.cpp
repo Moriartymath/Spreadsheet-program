@@ -1,5 +1,6 @@
 #include "mytable.h"
 #include "ui_mytable.h"
+#include "QTableWidget"
 
 MyTable::MyTable(QWidget *parent)
     : QMainWindow(parent)
@@ -11,5 +12,10 @@ MyTable::MyTable(QWidget *parent)
 MyTable::~MyTable()
 {
     delete ui;
+}
+
+void MyTable::on_actionQuit_triggered()
+{
+    this->close();
 }
 
