@@ -28,6 +28,33 @@ void TableOptions::SetPlaceHolderText()
         combo_box->setCurrentIndex(-1);
     }
 
+    ui->sheet_name->setPlaceholderText("Sheet Name");
+
+}
+
+void TableOptions::AppendParaments(QStringList &list)
+{
+    for (QComboBox* combo_box : {ui->Horiz_headers,ui->Vert_headers,(QComboBox*)ui->fontComboBox})
+    {
+        if(combo_box->currentIndex() != (-1))
+        {
+            combo_box->setStyleSheet("");
+            list.append(combo_box->currentText());
+        }
+        else
+            combo_box->setStyleSheet("border: 2px solid red");
+    }
+
+    if(ui->sheet_name->text().isEmpty())
+        ui->sheet_name->setStyleSheet("border: 2px solid red");
+    else
+    {
+        ui->sheet_name->setStyleSheet("");
+        list.append(ui->sheet_name->text());
+    }
+
+    list.append(ui->row_count->text());
+    list.append(ui->column_count->text());
 }
 
 void TableOptions::SlotOpenTableOptionsDialog()
@@ -38,12 +65,14 @@ void TableOptions::SlotOpenTableOptionsDialog()
 
 void TableOptions::on_continue_button_clicked()
 {
-    for (QComboBox* combo_box : {ui->Horiz_headers,ui->Vert_headers,(QComboBox*)ui->fontComboBox})
+    QStringList list;
+
+    AppendParaments(list);
+
+    if (list.length() == VALID_PARAMETRS)
     {
-        if(combo_box->currentIndex() != (-1))
-        {
-            qDebug() << combo_box->currentText();
-        }
+        emit SendInputData(list);
+        close();
     }
 }
 

@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     TableOptions opt_table{&w};
 
     QObject::connect(&w,SIGNAL(EmitOpenTableOptionsDialog()),&opt_table,SLOT(SlotOpenTableOptionsDialog()));
+    QObject::connect(&opt_table,SIGNAL(SendInputData(QStringList)),&w,SLOT(RecieveInputData(QStringList)));
 
     return a.exec();
 }

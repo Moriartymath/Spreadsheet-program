@@ -12,6 +12,7 @@ MyTable::MyTable(QWidget *parent)
     ui->setupUi(this);
 
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(CloseMyTab(int)));
+
 }
 
 void MyTable::mousePressEvent(QMouseEvent *eventPress)
@@ -41,6 +42,11 @@ void MyTable::HandleRightClick()
     case QMessageBox::No:
         break;
     }
+}
+
+void MyTable::RecieveInputData(QStringList list)
+{
+    qDebug() << list;
 }
 
 void MyTable::on_actionQuit_triggered()

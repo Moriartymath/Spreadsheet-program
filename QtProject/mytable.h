@@ -19,7 +19,8 @@ public:
     ~MyTable();
 private:
     void HandleRightClick();
-
+public slots:
+    void RecieveInputData(QStringList list);
 private slots:
     void on_actionQuit_triggered();
     void CloseMyTab(int indexTab);

@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>Images/testimage.jpg</file>
+        <file>Images/folder_icon.png</file>
+        <file>Images/save_as_icon.png</file>
+        <file>Images/save_changes_icon.png</file>
     </qresource>
 </RCC>
