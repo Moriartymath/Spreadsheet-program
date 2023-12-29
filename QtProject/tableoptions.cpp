@@ -71,8 +71,8 @@ void TableOptions::on_continue_button_clicked()
 
     if (list.length() == VALID_PARAMETRS)
     {
-        emit SendInputData(list);
         close();
+        emit SendInputData(list);
     }
 }
 

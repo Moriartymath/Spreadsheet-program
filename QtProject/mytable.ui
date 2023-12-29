@@ -88,6 +88,8 @@
    <addaction name="actionOpen_File"/>
    <addaction name="actionSave_as"/>
    <addaction name="actionSave"/>
+   <addaction name="actionZoom_in"/>
+   <addaction name="actionZoom_out"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -127,6 +129,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/Images/zoom_in_icon.png</normaloff>:/Images/zoom_in_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/Images/zoom_out_icon.png</normaloff>:/Images/zoom_out_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
  </widget>
