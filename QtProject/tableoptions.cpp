@@ -45,6 +45,8 @@ void TableOptions::AppendParaments(QStringList &list)
             combo_box->setStyleSheet("border: 2px solid red");
     }
 
+    list.append(ui->font_size->text());
+
     if(ui->sheet_name->text().isEmpty())
         ui->sheet_name->setStyleSheet("border: 2px solid red");
     else
@@ -53,8 +55,8 @@ void TableOptions::AppendParaments(QStringList &list)
         list.append(ui->sheet_name->text());
     }
 
-    list.append(ui->row_count->text());
     list.append(ui->column_count->text());
+    list.append(ui->row_count->text());
 }
 
 void TableOptions::SlotOpenTableOptionsDialog()
@@ -71,6 +73,7 @@ void TableOptions::on_continue_button_clicked()
 
     if (list.length() == VALID_PARAMETRS)
     {
+        qDebug() << list;
         close();
         emit SendInputData(list);
     }

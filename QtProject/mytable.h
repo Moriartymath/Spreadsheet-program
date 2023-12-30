@@ -4,6 +4,8 @@
 #include <QMainWindow>
 
 #define INFO_URL L"https://github.com/Moriartymath/Spreadsheet-program"
+#define NUMBERS_HEADER "Numbers"
+#define NAME_INDEX 4
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MyTable; }
@@ -23,6 +25,7 @@ private:
     bool CheckNameAvailability(QString sheet_name);
     void CreateTable(QStringList& list);
     void ResizeTable(int scale_to_resize) const;
+    QStringList GenerateHeaders(const QString& type, int count);
 
 public slots:
     void RecieveInputData(QStringList list);

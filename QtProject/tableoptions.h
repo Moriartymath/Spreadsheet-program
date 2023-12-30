@@ -7,7 +7,7 @@ namespace Ui {
 class TableOptions;
 }
 
-#define VALID_PARAMETRS 6
+#define VALID_PARAMETRS 7
 
 class TableOptions : public QDialog
 {

@@ -37,30 +37,26 @@
      <x>20</x>
      <y>90</y>
      <width>296</width>
-     <height>227</height>
+     <height>270</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="1" column="0">
-     <widget class="QComboBox" name="Vert_headers">
+    <item row="4" column="0">
+     <widget class="QSpinBox" name="font_size">
       <property name="font">
        <font>
-        <pointsize>10</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
-      <property name="maxVisibleItems">
-       <number>4</number>
+      <property name="toolTip">
+       <string extracomment="Font Size">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Font Size&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
-      <item>
-       <property name="text">
-        <string>Alphabetical</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Numbers</string>
-       </property>
-      </item>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
      </widget>
     </item>
     <item row="0" column="0">
@@ -89,7 +85,29 @@
       </item>
       <item>
        <property name="text">
-        <string>Numbers</string>
+        <string>Numerical</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QComboBox" name="Vert_headers">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="maxVisibleItems">
+       <number>4</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>Alphabetical</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Numerical</string>
        </property>
       </item>
      </widget>
@@ -126,7 +144,7 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="0">
+    <item row="8" column="0">
      <widget class="QSpinBox" name="row_count">
       <property name="font">
        <font>
@@ -143,7 +161,14 @@
        <number>1</number>
       </property>
       <property name="maximum">
-       <number>200</number>
+       <number>702</number>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLineEdit" name="sheet_name">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -207,14 +232,7 @@
        <number>1</number>
       </property>
       <property name="maximum">
-       <number>200</number>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLineEdit" name="sheet_name">
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <number>702</number>
       </property>
      </widget>
     </item>
@@ -278,7 +296,6 @@
   <tabstop>Vert_headers</tabstop>
   <tabstop>fontComboBox</tabstop>
   <tabstop>row_count</tabstop>
-  <tabstop>column_count</tabstop>
   <tabstop>continue_button</tabstop>
   <tabstop>cancel_button</tabstop>
  </tabstops>

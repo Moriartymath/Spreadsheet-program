@@ -154,6 +154,9 @@
    <property name="shortcut">
     <string>Ctrl+-</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
   </action>
  </widget>
  <resources>
