@@ -26,6 +26,11 @@ private:
     void CreateTable(QStringList& list);
     void ResizeTable(int scale_to_resize) const;
     QStringList GenerateHeaders(const QString& type, int count);
+    void readFromTxtFile() const;
+    void writeToTxtFile(QString path_to_file) const;
+    QString FindLongestTextInColumn(int column) const;
+    QString GenerateDashForTxtFile(const QString& longest_str) const;
+    QString GenerateSpacesForTxtFile(const QString& longest_str) const;
 
 public slots:
     void RecieveInputData(QStringList list);
@@ -38,6 +43,8 @@ private slots:
     void on_actionZoom_in_triggered();
 
     void on_actionZoom_out_triggered();
+
+    void on_actionSave_as_triggered();
 
 signals:
     void EmitOpenTableOptionsDialog();

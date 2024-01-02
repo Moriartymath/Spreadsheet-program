@@ -113,6 +113,9 @@
    <property name="text">
     <string>Save as</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
   </action>
   <action name="actionInfo">
    <property name="text">
