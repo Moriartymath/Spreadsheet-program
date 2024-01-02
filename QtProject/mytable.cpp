@@ -7,6 +7,7 @@
 #include "QHeaderView"
 #include "QFile"
 #include "QFileDialog"
+#include "QInputDialog"
 
 MyTable::MyTable(QWidget *parent)
     : QMainWindow(parent)
@@ -63,6 +64,7 @@ void MyTable::CreateTable(QStringList &list)
 {
     QTableWidget* widget = new QTableWidget{ui->tabWidget};
     connect(widget->itemDelegate(),SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),this,SLOT(SlotCloseEditor(QWidget*)));
+    connect(widget->horizontalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(HorizontalSectionDoubleClicked(int)));
     QFont font;
 
     font.setFamily(list[2]);
@@ -75,6 +77,8 @@ void MyTable::CreateTable(QStringList &list)
     widget->setVerticalHeaderLabels(GenerateHeaders(list[1],widget->rowCount()));
     widget->verticalHeader()->setFont(font);
     widget->horizontalHeader()->setFont(font);
+
+
 
     for (int i = 0; i < widget->rowCount(); ++i) {
         for (int j = 0; j < widget->columnCount(); ++j) {
@@ -185,14 +189,14 @@ void MyTable::writeToTxtFile(QString path_to_file) const
             QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
 
             QStringList list;
-            QString last_vertical_header_text = widget->verticalHeaderItem(widget->rowCount() - 1)->text();
+            QString longest_vertical_header_text = FindLongestVerticalHeader();
 
             for (int i = 0; i < widget->columnCount(); ++i) {
 
                 list.append(FindLongestTextInColumn(i));
             }
 
-            stream << GenerateSpacesForTxtFile(last_vertical_header_text);
+            stream << GenerateSpacesForTxtFile(longest_vertical_header_text);
 
             for (int i = 0; i < widget->columnCount(); ++i) {
                 stream << GenerateDashForTxtFile(list[i]);
@@ -201,7 +205,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
 
             stream << '\n';
 
-            stream << GenerateSpacesForTxtFile(last_vertical_header_text);
+            stream << GenerateSpacesForTxtFile(longest_vertical_header_text);
 
             for (int i = 0; i < widget->columnCount(); ++i) {
                 stream << "|";
@@ -222,9 +226,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
             for (int i = 0; i < widget->rowCount(); ++i) {
                 QString temporary = widget->verticalHeaderItem(i)->text();
 
-                stream << "----";
-
-               // stream << GenerateSpacesForTxtFile(last_vertical_header_text);
+                stream << GenerateDashForTxtFile(longest_vertical_header_text);
 
                 for (int i = 0; i < widget->columnCount(); ++i) {
                     stream << GenerateDashForTxtFile(list[i]);
@@ -234,7 +236,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
 
                 stream << temporary;
 
-                for (int i = 0; i < last_vertical_header_text.length() - temporary.length(); ++i) {
+                for (int i = 0; i < longest_vertical_header_text.length() - temporary.length(); ++i) {
                     stream << ' ';
                 }
 
@@ -258,7 +260,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
                  stream << "\n";
             }
 
-            stream << "----";
+            stream << GenerateDashForTxtFile(longest_vertical_header_text);
 
             for (int i = 0; i < widget->columnCount(); ++i) {
                  stream << GenerateDashForTxtFile(list[i]);
@@ -292,7 +294,8 @@ QString MyTable::GenerateDashForTxtFile(const QString &longest_str) const
     QString dashes;
 
     int length_of_longets_str = longest_str.length();
-    int total_length = length_of_longets_str + 2;
+    int indents = 2;
+    int total_length = length_of_longets_str + indents;
 
     for (int i = 0; i < total_length; ++i) {
             dashes.append('-');
@@ -304,13 +307,31 @@ QString MyTable::GenerateSpacesForTxtFile(const QString &longest_str) const
 {
     QString spaces;
     int length_of_longets_str = longest_str.length();
-    int total_length = length_of_longets_str + 2;
+    int indents = 2;
+    int total_length = length_of_longets_str + indents;
 
     for (int i = 0; i < total_length; ++i) {
             spaces.append(' ');
     }
 
     return spaces;
+}
+
+QString MyTable::FindLongestVerticalHeader() const
+{
+    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+
+    QString longest_vertical_header = widget->verticalHeaderItem(0)->text();
+
+    for (int vertical_header_index = 1; vertical_header_index < widget->rowCount(); ++vertical_header_index) {
+            QString current_header_text = widget->verticalHeaderItem(vertical_header_index)->text();
+
+            if(longest_vertical_header.length() < current_header_text.length())
+                longest_vertical_header = current_header_text;
+    }
+
+    return longest_vertical_header;
+
 }
 
 void MyTable::SlotCloseEditor(QWidget* item)
@@ -320,6 +341,38 @@ void MyTable::SlotCloseEditor(QWidget* item)
     widget->resizeColumnToContents(widget->currentItem()->column());
     widget->selectionModel()->clear();
     widget->clearFocus();
+}
+
+void MyTable::HorizontalSectionDoubleClicked(int index)
+{
+    qDebug() << index;
+    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+    QString new_text = QInputDialog::getText(this,"Label for header","Enter new header label",
+                                             QLineEdit::Normal,QString(),nullptr,Qt::MSWindowsFixedSizeDialogHint);
+
+    bool IsNameAvailable = true;
+    if (new_text == widget->horizontalHeaderItem(index)->text())
+            return;
+
+    for (int i = 0; i < widget->columnCount(); ++i) {
+            if(i != index)
+            {
+                if(widget->horizontalHeaderItem(i)->text() == new_text)
+                {
+                    QMessageBox::warning(this,"Invalid label`s name","There is already label with such name.");
+                    IsNameAvailable = false;
+                    break;
+                }
+            }
+    }
+
+    if(IsNameAvailable)
+    {
+        widget->horizontalHeaderItem(index)->setText(new_text);
+        widget->resizeColumnToContents(index);
+    }
+
+
 }
 
 void MyTable::RecieveInputData(QStringList list)
@@ -362,11 +415,12 @@ void MyTable::on_actionZoom_out_triggered()
 
 void MyTable::on_actionSave_as_triggered()
 {
+    if (ui->tabWidget->count() == 0)
+         return;
+    QString tab_name = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     QString filter = "Text file (*.txt)";
-    QString new_file_name = QFileDialog::getSaveFileName(this,"Save string","C:/",filter);
+    QString new_file_name = QFileDialog::getSaveFileName(this,"Save Table","C:/" + tab_name,filter);
     if(!new_file_name.isEmpty())
          writeToTxtFile(new_file_name);
-
-    qDebug() << new_file_name;
 }
 

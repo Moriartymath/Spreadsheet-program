@@ -31,6 +31,8 @@ private:
     QString FindLongestTextInColumn(int column) const;
     QString GenerateDashForTxtFile(const QString& longest_str) const;
     QString GenerateSpacesForTxtFile(const QString& longest_str) const;
+    QString FindLongestVerticalHeader() const;
+
 
 public slots:
     void RecieveInputData(QStringList list);
@@ -39,6 +41,7 @@ private slots:
     void CloseMyTab(int indexTab);
     void on_actionInfo_triggered();
     void SlotCloseEditor(QWidget* item);
+    void HorizontalSectionDoubleClicked(int index);
 
     void on_actionZoom_in_triggered();
 
