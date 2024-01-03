@@ -90,6 +90,7 @@
    <addaction name="actionSave"/>
    <addaction name="actionZoom_in"/>
    <addaction name="actionZoom_out"/>
+   <addaction name="action_undo"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -159,6 +160,21 @@
    </property>
    <property name="menuRole">
     <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="action_undo">
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/Images/undo_icon.png</normaloff>:/Images/undo_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Revert changes</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
    </property>
   </action>
  </widget>

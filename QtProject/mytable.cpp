@@ -12,11 +12,17 @@
 MyTable::MyTable(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MyTable)
+    , line_edit_for_status_bar{new QLineEdit}
 {
     ui->setupUi(this);
     setWindowTitle(window_title);
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(CloseMyTab(int)));
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(CurrentTabChanged(int)));
+
+    line_edit_for_status_bar->setText("Hello");
+    line_edit_for_status_bar->setAlignment(Qt::AlignmentFlag::AlignCenter);
+    line_edit_for_status_bar->setModified(false);
+    ui->statusbar->addPermanentWidget(line_edit_for_status_bar,3);
 }
 
 void MyTable::mousePressEvent(QMouseEvent *eventPress)
@@ -87,9 +93,19 @@ void MyTable::CreateTable(QStringList &list)
         for (int j = 0; j < widget->columnCount(); ++j) {
             QTableWidgetItem* item = new QTableWidgetItem;
             item->setFont(font);
+            item->setText("hello");
             widget->setItem(i,j,item);
+            item->setText("hello");
         }
     }
+    QStringList list_of_info;
+    list_of_info.append(list[4]);
+    list_of_info.append("Saved");
+    list_of_info.append("0");
+
+
+    connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+    AddToStack(list_of_info,widget);
     ui->tabWidget->addTab(widget,list[4]);
 }
 
@@ -101,6 +117,7 @@ void MyTable::ResizeTable(int scale_to_resize) const
     QFont NewFont;
 
     QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+    disconnect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
 
     int new_pixel_size = widget->horizontalHeader()->font().pixelSize() + (scale_to_resize);
     if(new_pixel_size <= 0)
@@ -115,6 +132,10 @@ void MyTable::ResizeTable(int scale_to_resize) const
 
     for (int i = 0; i < widget->rowCount(); ++i) {
         for (int j = 0; j < widget->columnCount(); ++j) {
+            if(i == 0 && j == 0)
+               connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+            else if(i == 0 && j == 1)
+               disconnect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
             QTableWidgetItem* item = widget->item(i,j);
             item->setFont(NewFont);
         }
@@ -122,6 +143,8 @@ void MyTable::ResizeTable(int scale_to_resize) const
 
     widget->resizeColumnsToContents();
     widget->resizeRowsToContents();
+
+    connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
 }
 
 QStringList MyTable::GenerateHeaders(const QString &type, int count)
@@ -229,9 +252,10 @@ void MyTable::readFromTxtFile(const QString& path_to_file)
                 list_of_file_info.append(base_file_name);
                 list_of_file_info.append(path_to_file);
                 list_of_file_info.append("Saved");
+                list_of_file_info.append("0");
                 list_of_sheet_referenced_to_file.append(list_of_file_info);
 
-                WriteToTable(list,base_file_name);
+                WriteToTable(list,base_file_name,list_of_file_info);
 
             }
 
@@ -240,7 +264,7 @@ void MyTable::readFromTxtFile(const QString& path_to_file)
 
 }
 
-void MyTable::WriteToTable(QStringList &list, const QString& name_of_file)
+void MyTable::WriteToTable(QStringList &list, const QString& name_of_file,const QStringList& list_of_file_info)
 {
     QList<int> list_of_indexes;
     QList<QList<int>> sliced_list;
@@ -387,10 +411,42 @@ void MyTable::WriteToTable(QStringList &list, const QString& name_of_file)
 
     widget->setVerticalHeaderLabels(Vertical_Headers_Labels);
 
+
+    connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+    AddToStack(list_of_file_info,widget);
     ui->tabWidget->addTab(widget,name_of_file);
 
     qDebug() << Vertical_Headers_Labels;
     qDebug() << sliced_list;
+}
+
+void MyTable::AddToStack(const QStringList &file_info, QTableWidget *table_widget)
+{
+    std::pair<std::pair<QStringList,QList<QList<QTableWidgetItem*>>>,QTableWidget*> my_pair;
+
+    std::pair<QStringList,QList<QList<QTableWidgetItem*>>> inner_pair;
+    inner_pair.first = file_info;
+
+    QList<QTableWidgetItem*> inner_list;
+
+    for (int row = 0; row < table_widget->rowCount(); ++row) {
+
+            for (int column = 0; column < table_widget->columnCount(); ++column) {
+                QTableWidgetItem* copy_item = new QTableWidgetItem;
+
+                copy_item->setText(table_widget->item(row,column)->text());
+                copy_item->setFont(table_widget->item(row,column)->font());
+                inner_list.append(copy_item);
+            }
+    }
+    inner_pair.second.append(inner_list);
+
+
+    my_pair.first = inner_pair;
+    my_pair.second = table_widget;
+
+    stack_list.append(my_pair);
+
 }
 
 void MyTable::writeToTxtFile(const QString &path_to_file) const
@@ -654,11 +710,74 @@ void MyTable::CurrentTabChanged(int tab_index)
                 break;
         }
     }
+    QTableWidgetItem item;
+
 
     if(!IsWindowTitleChanged)
     {
         setWindowTitle(window_title + "\tCurrent Tab - \" " + ui->tabWidget->tabText(tab_index) + " \"");
     }
+}
+
+void MyTable::ItemChanged(QTableWidgetItem *item)
+{
+    qDebug() << "hello";
+    QTableWidget* current_changed_table = item->tableWidget();
+    for (int i = 0; i < stack_list.length(); ++i) {
+        if(stack_list[i].second == current_changed_table)
+        {
+                QString current_state;
+                int current_state_int;
+                if(stack_list[i].first.first.length() == 3)
+                {
+                    stack_list[i].first.first[1] = "Unsaved Changes";
+                    current_state = stack_list[i].first.first[2];
+                    current_state_int = current_state.toInt();
+                    current_state_int++;
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    stack_list[i].first.first[2] = current_state;
+
+                    qDebug() << stack_list[i].first.first[2];
+                }
+                else
+                {
+                    stack_list[i].first.first[2] = "Unsaved Changes";
+                    current_state = stack_list[i].first.first[3];
+                    current_state_int = current_state.toInt();
+                    current_state_int++;
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    stack_list[i].first.first[3] = current_state;
+
+                    qDebug() << stack_list[i].first.first[3];
+                }
+
+            QList<QTableWidgetItem*> list_of_new_items;
+
+            for (int row= 0; row < current_changed_table->rowCount(); ++row) {
+
+                    for (int column = 0; column < current_changed_table->columnCount(); ++column) {
+
+                        QTableWidgetItem* copy_item = new QTableWidgetItem;
+
+                        copy_item->setFont(current_changed_table->item(row,column)->font());
+                        copy_item->setText(current_changed_table->item(row,column)->text());
+
+                        list_of_new_items.append(copy_item);
+                    }
+            }
+            stack_list[i].first.second.append(list_of_new_items);
+            break;
+        }
+    }
+
+    for (const auto& item : stack_list[0].first.second) {
+        for (const auto& inner_item : item) {
+            qDebug() << inner_item->text();
+        }
+    }
+
 }
 
 void MyTable::RecieveInputData(QStringList list)
@@ -724,4 +843,102 @@ void MyTable::on_actionOpen_File_triggered()
     if(!new_file_name.isEmpty())
          readFromTxtFile(new_file_name);
 }
+
+
+void MyTable::on_action_undo_triggered()
+{
+    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+
+    disconnect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+
+    for (int i = 0; i < stack_list.length(); ++i) {
+
+         if(stack_list[i].second == widget)
+         {
+            QString current_state;
+            if(stack_list[i].first.first.length() == 3)
+                    current_state = stack_list[i].first.first[2];
+            else
+                    current_state = stack_list[i].first.first[3];
+
+            if(current_state.toInt() >= 1)
+            {
+                    int current_state_int = current_state.toInt();
+                    current_state_int--;
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    if(stack_list[i].first.first.length() == 3)
+                         stack_list[i].first.first[2] = current_state;
+                    else
+                        stack_list[i].first.first[3] = current_state;
+            }
+            else
+            {
+                return;
+            }
+
+            int column_count = widget->columnCount();
+            QList<QTableWidgetItem*> temporary_list;
+
+            int row_index = 0;
+            bool if_break_statement = false;
+
+            for (const auto& item: stack_list[i].first.second[current_state.toInt()]) {
+
+                    if (row_index >= widget->rowCount())
+                        break;
+                    while (temporary_list.length() != column_count) {
+
+                        temporary_list.append(item);
+
+                        if_break_statement = true;
+                        break;
+                    }
+
+                    if(temporary_list.length() == column_count)
+                        if_break_statement = false;
+                    if(!if_break_statement){
+
+                    int column_index = 0;
+                    for (const auto& inner_item : temporary_list) {
+
+                        QTableWidgetItem* item_to_change = widget->item(row_index,column_index);
+
+                        item_to_change->setText(inner_item->text());
+                        item_to_change->setFont(inner_item->font());
+                        column_index++;
+                    }
+
+                    temporary_list.clear();
+                    row_index++;
+                    }
+            }
+
+
+         }
+    }
+
+    connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

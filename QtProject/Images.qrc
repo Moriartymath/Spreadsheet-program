@@ -6,5 +6,6 @@
         <file>Images/save_changes_icon.png</file>
         <file>Images/zoom_in_icon.png</file>
         <file>Images/zoom_out_icon.png</file>
+        <file>Images/undo_icon.png</file>
     </qresource>
 </RCC>
