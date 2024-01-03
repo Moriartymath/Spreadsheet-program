@@ -251,15 +251,17 @@ void MyTable::WriteToTable(QStringList &list)
 
                     bool IsEndOfLine = false;
 
+                    qDebug() <<"before " <<index;
                     list_of_indexes.append(index);
                     index++;
                     while(ptr_to_str[index] != ' ')
                     {
                         index++;
 
-                        if(index == length_of_str)
+                        if(index >= length_of_str)
                         {
                             IsEndOfLine = true;
+                            index = length_of_str - 1;
                             break;
                         }
                     }
@@ -286,11 +288,12 @@ void MyTable::WriteToTable(QStringList &list)
                     index -= 3;
 
                     list_of_indexes.append(index);
+                    qDebug() <<"after " <<index;
                     if(list_of_indexes[list_of_indexes.length() - 1]  == list_of_indexes[list_of_indexes.length() - 2])
                         index +=3;
 
                 }
-                //qDebug() << list_of_indexes;
+                qDebug() << list_of_indexes;
 
                 int length_of_list = list_of_indexes.length();
                 for (int i = 0; i < length_of_list / 2; ++i) {
@@ -318,7 +321,7 @@ void MyTable::WriteToTable(QStringList &list)
                         if(start > list[row].length() - 1)
                             horizontal_label.append(list[row][start - 1]);
                         else
-                            horizontal_label.append(list[row][start]);
+                           horizontal_label.append(list[row][start]);
                     }
 
                     Horizontal_Headers_Labels.append(horizontal_label.remove(' '));
