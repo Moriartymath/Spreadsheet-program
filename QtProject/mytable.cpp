@@ -291,6 +291,8 @@ void MyTable::WriteToTable(QStringList &list)
                     qDebug() <<"after " <<index;
                     if(list_of_indexes[list_of_indexes.length() - 1]  == list_of_indexes[list_of_indexes.length() - 2])
                         index +=3;
+                    else
+                        index++;
 
                 }
                 qDebug() << list_of_indexes;
@@ -328,18 +330,40 @@ void MyTable::WriteToTable(QStringList &list)
                 }
 
                 qDebug() << Horizontal_Headers_Labels;
+                widget->setColumnCount(sliced_list.length());
+                widget->setHorizontalHeaderLabels(Horizontal_Headers_Labels);
             }
             else
             {
                 size_t index_end_of_vertical_headers = sliced_list[0][0] - 3;
 
                 QString vertical_header_label =  list[row].first(index_end_of_vertical_headers + 1);
-
                 Vertical_Headers_Labels.append(vertical_header_label.remove(' '));
 
-            }
+                int column = 0;
 
+                for (const auto& index_list : sliced_list) {
+
+                    QString item_text;
+                    for (int start = index_list.first(); start <= index_list.last(); ++start) {
+                        if(start > list[row].length() - 1)
+                           item_text.append(list[row][start - 1]);
+                        else
+                           item_text.append(list[row][start]);
+                    }
+
+                    QTableWidgetItem* item = new QTableWidgetItem;
+                    item->setText(item_text.remove(' '));
+                    widget->setItem(row - 1,column,item);
+                    column++;
+                }
+
+            }
     }
+
+
+    widget->setVerticalHeaderLabels(Vertical_Headers_Labels);
+    ui->tabWidget->addTab(widget,"hello23");
 
     qDebug() << Vertical_Headers_Labels;
     qDebug() << sliced_list;
