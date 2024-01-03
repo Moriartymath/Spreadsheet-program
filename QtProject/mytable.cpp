@@ -174,12 +174,175 @@ QStringList MyTable::GenerateHeaders(const QString &type, int count)
     return list;
 }
 
-void MyTable::readFromTxtFile() const
+void MyTable::readFromTxtFile(const QString& path_to_file)
 {
+    QFile file{path_to_file};
+    QFileInfo file_info{file};
+    QString base_file_name = file_info.baseName();
+    qDebug() << base_file_name;
+
+
+    if(file.open(QIODevice::ReadOnly))
+    {
+            QTextStream stream{&file};
+            QStringList list;
+            QString str  = stream.readLine();
+
+            int index_row = 0;
+
+            while(true)
+            {
+                QString current_row = stream.readLine();
+
+                if(current_row.isEmpty())
+                    break;
+
+                if(index_row % 2 == 0)
+                {
+                    QString a = current_row.remove('|');
+                    int spaces_to_erase = 2;
+                    for (int space = 0; space < spaces_to_erase; ++space) {
+                        a.removeLast();
+                    }
+                    qDebug() << a << a.length();
+                    list.append(a);
+
+                }
+
+                index_row++;
+            }
+
+            if(!list.isEmpty())
+               WriteToTable(list);
+
+
+    }
 
 }
 
-void MyTable::writeToTxtFile(QString path_to_file) const
+void MyTable::WriteToTable(QStringList &list)
+{
+    QList<int> list_of_indexes;
+    QList<QList<int>> sliced_list;
+    QStringList Vertical_Headers_Labels;
+    QStringList Horizontal_Headers_Labels;
+    QTableWidget* widget = new QTableWidget{ui->tabWidget};
+    widget->setRowCount(list.length() - 1);
+
+    for (int row = 0; row < list.length(); ++row) {
+            if(row == 0)
+            {
+                QString horizontal_header = list[row];
+
+                std::string str  = horizontal_header.toStdString();
+                const char* ptr_to_str = str.c_str();
+
+                size_t length_of_str = std::strlen(ptr_to_str);
+
+                int index = 0;
+
+                while (ptr_to_str[index] != '\n') {
+
+                    if(ptr_to_str[index] == ' ')
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    bool IsEndOfLine = false;
+
+                    list_of_indexes.append(index);
+                    index++;
+                    while(ptr_to_str[index] != ' ')
+                    {
+                        index++;
+
+                        if(index == length_of_str)
+                        {
+                            IsEndOfLine = true;
+                            break;
+                        }
+                    }
+                    if (!IsEndOfLine)
+                    {
+                        while(ptr_to_str[index] == ' ')
+                        {
+                            index++;
+
+                            if(index == length_of_str)
+                            {
+                                IsEndOfLine = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(IsEndOfLine)
+                    {
+                        list_of_indexes.append(index);
+                        break;
+                    }
+
+                    index -= 3;
+
+                    list_of_indexes.append(index);
+                    if(list_of_indexes[list_of_indexes.length() - 1]  == list_of_indexes[list_of_indexes.length() - 2])
+                        index +=3;
+
+                }
+                //qDebug() << list_of_indexes;
+
+                int length_of_list = list_of_indexes.length();
+                for (int i = 0; i < length_of_list / 2; ++i) {
+
+                    QList<int> list_of_two_indexes;
+                    int first_two_element = 2;
+
+                    for (int index = 0; index < first_two_element; ++index) {
+
+                        list_of_two_indexes.append(list_of_indexes[index]);
+                    }
+
+                    sliced_list.append(list_of_two_indexes);
+
+                    for (int i = 0; i < first_two_element; ++i) {
+                        list_of_indexes.removeFirst();
+                    }
+
+                }
+
+                for (const auto& index_list : sliced_list) {
+
+                    QString horizontal_label;
+                    for (int start = index_list.first(); start <= index_list.last(); ++start) {
+                        if(start > list[row].length() - 1)
+                            horizontal_label.append(list[row][start - 1]);
+                        else
+                            horizontal_label.append(list[row][start]);
+                    }
+
+                    Horizontal_Headers_Labels.append(horizontal_label.remove(' '));
+                }
+
+                qDebug() << Horizontal_Headers_Labels;
+            }
+            else
+            {
+                size_t index_end_of_vertical_headers = sliced_list[0][0] - 3;
+
+                QString vertical_header_label =  list[row].first(index_end_of_vertical_headers + 1);
+
+                Vertical_Headers_Labels.append(vertical_header_label.remove(' '));
+
+            }
+
+    }
+
+    qDebug() << Vertical_Headers_Labels;
+    qDebug() << sliced_list;
+}
+
+void MyTable::writeToTxtFile(const QString &path_to_file) const
 {
     QFile file{path_to_file};
 
@@ -200,7 +363,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
 
             for (int i = 0; i < widget->columnCount(); ++i) {
                 stream << GenerateDashForTxtFile(list[i]);
-                stream << ' ';
+                stream << "  ";
             }
 
             stream << '\n';
@@ -218,7 +381,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
 
                 current_header_text.append('|');
 
-                stream << current_header_text + ' ';
+                stream << current_header_text + "  ";
             }
 
             stream << '\n';
@@ -230,7 +393,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
 
                 for (int i = 0; i < widget->columnCount(); ++i) {
                     stream << GenerateDashForTxtFile(list[i]);
-                    stream << ' ';
+                    stream << "  ";
                 }
                 stream << '\n';
 
@@ -254,7 +417,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
                     }
 
                     current_text.append('|');
-                    stream << current_text + ' ';
+                    stream << current_text + "  ";
                 }
 
                  stream << "\n";
@@ -264,7 +427,7 @@ void MyTable::writeToTxtFile(QString path_to_file) const
 
             for (int i = 0; i < widget->columnCount(); ++i) {
                  stream << GenerateDashForTxtFile(list[i]);
-                 stream << ' ';
+                 stream << "  ";
             }
     }
     file.close();
@@ -422,5 +585,19 @@ void MyTable::on_actionSave_as_triggered()
     QString new_file_name = QFileDialog::getSaveFileName(this,"Save Table","C:/" + tab_name,filter);
     if(!new_file_name.isEmpty())
          writeToTxtFile(new_file_name);
+}
+
+
+void MyTable::on_actionSave_triggered()
+{
+}
+
+
+void MyTable::on_actionOpen_File_triggered()
+{
+    QString filter = "Text file (*.txt)";
+    QString new_file_name = QFileDialog::getOpenFileName(this,"Open file","C:/",filter);
+    if(!new_file_name.isEmpty())
+         readFromTxtFile(new_file_name);
 }
 

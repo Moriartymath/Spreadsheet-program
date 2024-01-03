@@ -26,8 +26,9 @@ private:
     void CreateTable(QStringList& list);
     void ResizeTable(int scale_to_resize) const;
     QStringList GenerateHeaders(const QString& type, int count);
-    void readFromTxtFile() const;
-    void writeToTxtFile(QString path_to_file) const;
+    void readFromTxtFile(const QString& path_to_file);
+    void WriteToTable(QStringList& list);
+    void writeToTxtFile(const QString& path_to_file) const;
     QString FindLongestTextInColumn(int column) const;
     QString GenerateDashForTxtFile(const QString& longest_str) const;
     QString GenerateSpacesForTxtFile(const QString& longest_str) const;
@@ -48,6 +49,10 @@ private slots:
     void on_actionZoom_out_triggered();
 
     void on_actionSave_as_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionOpen_File_triggered();
 
 signals:
     void EmitOpenTableOptionsDialog();
