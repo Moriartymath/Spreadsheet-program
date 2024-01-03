@@ -295,6 +295,9 @@
   <tabstop>Horiz_headers</tabstop>
   <tabstop>Vert_headers</tabstop>
   <tabstop>fontComboBox</tabstop>
+  <tabstop>font_size</tabstop>
+  <tabstop>sheet_name</tabstop>
+  <tabstop>column_count</tabstop>
   <tabstop>row_count</tabstop>
   <tabstop>continue_button</tabstop>
   <tabstop>cancel_button</tabstop>

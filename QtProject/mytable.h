@@ -27,12 +27,13 @@ private:
     void ResizeTable(int scale_to_resize) const;
     QStringList GenerateHeaders(const QString& type, int count);
     void readFromTxtFile(const QString& path_to_file);
-    void WriteToTable(QStringList& list);
+    void WriteToTable(QStringList& list, const QString& name_of_file);
     void writeToTxtFile(const QString& path_to_file) const;
     QString FindLongestTextInColumn(int column) const;
     QString GenerateDashForTxtFile(const QString& longest_str) const;
     QString GenerateSpacesForTxtFile(const QString& longest_str) const;
     QString FindLongestVerticalHeader() const;
+    void EnterNewName(QString& sheet_name);
 
 
 public slots:
@@ -43,6 +44,8 @@ private slots:
     void on_actionInfo_triggered();
     void SlotCloseEditor(QWidget* item);
     void HorizontalSectionDoubleClicked(int index);
+    void VerticalSectionDoubleClicked(int index);
+    void CurrentTabChanged(int tab_index);
 
     void on_actionZoom_in_triggered();
 
@@ -59,5 +62,7 @@ signals:
 
 private:
     Ui::MyTable *ui;
+    QList<QStringList> list_of_sheet_referenced_to_file;
+    const QString window_title = "Spreadsheet-program";
 };
 #endif // MYTABLE_H

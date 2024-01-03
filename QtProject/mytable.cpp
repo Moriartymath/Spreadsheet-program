@@ -14,7 +14,9 @@ MyTable::MyTable(QWidget *parent)
     , ui(new Ui::MyTable)
 {
     ui->setupUi(this);
+    setWindowTitle(window_title);
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(CloseMyTab(int)));
+    connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(CurrentTabChanged(int)));
 }
 
 void MyTable::mousePressEvent(QMouseEvent *eventPress)
@@ -65,6 +67,7 @@ void MyTable::CreateTable(QStringList &list)
     QTableWidget* widget = new QTableWidget{ui->tabWidget};
     connect(widget->itemDelegate(),SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),this,SLOT(SlotCloseEditor(QWidget*)));
     connect(widget->horizontalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(HorizontalSectionDoubleClicked(int)));
+    connect(widget->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(VerticalSectionDoubleClicked(int)));
     QFont font;
 
     font.setFamily(list[2]);
@@ -179,7 +182,15 @@ void MyTable::readFromTxtFile(const QString& path_to_file)
     QFile file{path_to_file};
     QFileInfo file_info{file};
     QString base_file_name = file_info.baseName();
-    qDebug() << base_file_name;
+    bool IsNameAvailable = CheckNameAvailability(base_file_name);
+
+    if(!IsNameAvailable)
+    {
+            EnterNewName(base_file_name);
+            if(file_info.baseName() == base_file_name)
+                return;
+    }
+
 
 
     if(file.open(QIODevice::ReadOnly))
@@ -213,20 +224,32 @@ void MyTable::readFromTxtFile(const QString& path_to_file)
             }
 
             if(!list.isEmpty())
-               WriteToTable(list);
+            {
+                QStringList list_of_file_info;
+                list_of_file_info.append(base_file_name);
+                list_of_file_info.append(path_to_file);
+                list_of_file_info.append("Saved");
+                list_of_sheet_referenced_to_file.append(list_of_file_info);
+
+                WriteToTable(list,base_file_name);
+
+            }
 
 
     }
 
 }
 
-void MyTable::WriteToTable(QStringList &list)
+void MyTable::WriteToTable(QStringList &list, const QString& name_of_file)
 {
     QList<int> list_of_indexes;
     QList<QList<int>> sliced_list;
     QStringList Vertical_Headers_Labels;
     QStringList Horizontal_Headers_Labels;
     QTableWidget* widget = new QTableWidget{ui->tabWidget};
+    connect(widget->itemDelegate(),SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),this,SLOT(SlotCloseEditor(QWidget*)));
+    connect(widget->horizontalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(HorizontalSectionDoubleClicked(int)));
+    connect(widget->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(VerticalSectionDoubleClicked(int)));
     widget->setRowCount(list.length() - 1);
 
     for (int row = 0; row < list.length(); ++row) {
@@ -363,7 +386,8 @@ void MyTable::WriteToTable(QStringList &list)
 
 
     widget->setVerticalHeaderLabels(Vertical_Headers_Labels);
-    ui->tabWidget->addTab(widget,"hello23");
+
+    ui->tabWidget->addTab(widget,name_of_file);
 
     qDebug() << Vertical_Headers_Labels;
     qDebug() << sliced_list;
@@ -524,6 +548,29 @@ QString MyTable::FindLongestVerticalHeader() const
 
 }
 
+void MyTable::EnterNewName(QString& sheet_name)
+{
+    QString new_sheet_name = QInputDialog::getText(this,"New Sheet`s name","Enter new name to be assigned",
+                             QLineEdit::Normal,QString(),nullptr,Qt::MSWindowsFixedSizeDialogHint);
+
+    bool IsNameAvailable = CheckNameAvailability(new_sheet_name);
+    if( IsNameAvailable && !new_sheet_name.isEmpty())
+        sheet_name = new_sheet_name;
+    else
+    {
+        QMessageBox::Button reply = QMessageBox::question(this,"Question","Do you want to try again?");
+
+        if(reply == QMessageBox::Yes)
+            EnterNewName(sheet_name);
+        else
+            return;
+    }
+
+
+
+
+}
+
 void MyTable::SlotCloseEditor(QWidget* item)
 {
     QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
@@ -538,7 +585,7 @@ void MyTable::HorizontalSectionDoubleClicked(int index)
     qDebug() << index;
     QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
     QString new_text = QInputDialog::getText(this,"Label for header","Enter new header label",
-                                             QLineEdit::Normal,QString(),nullptr,Qt::MSWindowsFixedSizeDialogHint);
+                       QLineEdit::Normal,QString(),nullptr,Qt::MSWindowsFixedSizeDialogHint);
 
     bool IsNameAvailable = true;
     if (new_text == widget->horizontalHeaderItem(index)->text())
@@ -549,7 +596,7 @@ void MyTable::HorizontalSectionDoubleClicked(int index)
             {
                 if(widget->horizontalHeaderItem(i)->text() == new_text)
                 {
-                    QMessageBox::warning(this,"Invalid label`s name","There is already label with such name.");
+                    QMessageBox::warning(this,"Invalid header`s name","There is already header with such name.");
                     IsNameAvailable = false;
                     break;
                 }
@@ -561,8 +608,57 @@ void MyTable::HorizontalSectionDoubleClicked(int index)
         widget->horizontalHeaderItem(index)->setText(new_text);
         widget->resizeColumnToContents(index);
     }
+}
 
+void MyTable::VerticalSectionDoubleClicked(int index)
+{
+    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+    QString new_text = QInputDialog::getText(this,"Label for header","Enter new header labels",
+                                             QLineEdit::Normal,QString(),nullptr,Qt::MSWindowsFixedSizeDialogHint);
 
+    bool IsNameAvailable = true;
+    if (new_text == widget->verticalHeaderItem(index)->text())
+        return;
+
+    for (int i = 0; i < widget->rowCount(); ++i) {
+        if(i != index)
+        {
+                if(widget->verticalHeaderItem(i)->text() == new_text)
+                {
+                    QMessageBox::warning(this,"Invalid header`s name","There is already header with such name.");
+                    IsNameAvailable = false;
+                    break;
+                }
+        }
+    }
+
+    if(IsNameAvailable)
+    {
+        widget->verticalHeaderItem(index)->setText(new_text);
+        widget->resizeColumnToContents(index);
+        widget->resizeRowToContents(index);
+    }
+}
+
+void MyTable::CurrentTabChanged(int tab_index)
+{
+    bool IsWindowTitleChanged = false;
+    for (int i = 0; i < list_of_sheet_referenced_to_file.length(); ++i) {
+        QString name_of_uploaded_sheet = list_of_sheet_referenced_to_file[i][0];
+
+        if(ui->tabWidget->tabText(tab_index) == name_of_uploaded_sheet)
+        {
+                QString path_to_file = list_of_sheet_referenced_to_file[i][1];
+                this->setWindowTitle(window_title + "\tCurrent Tab - \" " + name_of_uploaded_sheet + " \" referenced to file - " +  path_to_file);
+                IsWindowTitleChanged = true;
+                break;
+        }
+    }
+
+    if(!IsWindowTitleChanged)
+    {
+        setWindowTitle(window_title + "\tCurrent Tab - \" " + ui->tabWidget->tabText(tab_index) + " \"");
+    }
 }
 
 void MyTable::RecieveInputData(QStringList list)
@@ -617,6 +713,7 @@ void MyTable::on_actionSave_as_triggered()
 
 void MyTable::on_actionSave_triggered()
 {
+
 }
 
 
