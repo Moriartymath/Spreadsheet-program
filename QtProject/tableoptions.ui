@@ -41,21 +41,42 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="4" column="0">
-     <widget class="QSpinBox" name="font_size">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string extracomment="Font Size">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Font Size&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
+    <item row="5" column="0">
+     <widget class="QLineEdit" name="sheet_name">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
-      <property name="minimum">
-       <number>1</number>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QFontComboBox" name="fontComboBox">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <property name="maxVisibleItems">
+       <number>5</number>
+      </property>
+      <property name="placeholderText">
+       <string extracomment="Select Font"/>
+      </property>
+      <property name="writingSystem">
+       <enum>QFontDatabase::Latin</enum>
+      </property>
+      <property name="fontFilters">
+       <set>QFontComboBox::ScalableFonts</set>
+      </property>
+      <property name="currentFont">
+       <font>
+        <family>Arial</family>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>false</kerning>
+       </font>
       </property>
      </widget>
     </item>
@@ -112,38 +133,6 @@
       </item>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QFontComboBox" name="fontComboBox">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="editable">
-       <bool>false</bool>
-      </property>
-      <property name="maxVisibleItems">
-       <number>5</number>
-      </property>
-      <property name="placeholderText">
-       <string extracomment="Select Font"/>
-      </property>
-      <property name="writingSystem">
-       <enum>QFontDatabase::Latin</enum>
-      </property>
-      <property name="fontFilters">
-       <set>QFontComboBox::ScalableFonts</set>
-      </property>
-      <property name="currentFont">
-       <font>
-        <family>Arial</family>
-        <strikeout>false</strikeout>
-        <stylestrategy>PreferDefault</stylestrategy>
-        <kerning>false</kerning>
-       </font>
-      </property>
-     </widget>
-    </item>
     <item row="8" column="0">
      <widget class="QSpinBox" name="row_count">
       <property name="font">
@@ -162,13 +151,6 @@
       </property>
       <property name="maximum">
        <number>702</number>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLineEdit" name="sheet_name">
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -216,6 +198,9 @@
         <pointsize>12</pointsize>
        </font>
       </property>
+      <property name="toolTip">
+       <string extracomment="Column count"/>
+      </property>
       <property name="wrapping">
        <bool>false</bool>
       </property>
@@ -233,6 +218,24 @@
       </property>
       <property name="maximum">
        <number>702</number>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QSpinBox" name="font_size">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string extracomment="Font Size">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Font Size&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="minimum">
+       <number>1</number>
       </property>
      </widget>
     </item>

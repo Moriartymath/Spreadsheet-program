@@ -37,7 +37,7 @@ private:
     QString FindLongestVerticalHeader() const;
     void EnterNewName(QString& sheet_name);
     void AddToStack(const QStringList& file_info,QTableWidget* table_widget);
-    void ReverseChanges(int IsReverseDirection)
+    void ReverseChanges(int IsReverseDirection);
 
 
 public slots:
@@ -63,6 +63,10 @@ private slots:
     void on_actionOpen_File_triggered();
 
     void on_action_undo_triggered();
+
+    void on_actionredo_triggered();
+
+    void on_actionCreate_new_table_triggered();
 
 signals:
     void EmitOpenTableOptionsDialog();

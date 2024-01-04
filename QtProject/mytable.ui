@@ -62,7 +62,9 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_File"/>
+    <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
+    <addaction name="actionCreate_new_table"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
@@ -87,10 +89,11 @@
    </attribute>
    <addaction name="actionOpen_File"/>
    <addaction name="actionSave_as"/>
-   <addaction name="actionSave"/>
+   <addaction name="actionCreate_new_table"/>
    <addaction name="actionZoom_in"/>
    <addaction name="actionZoom_out"/>
    <addaction name="action_undo"/>
+   <addaction name="actionredo"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -104,6 +107,9 @@
    </property>
    <property name="text">
     <string>Open File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
    </property>
   </action>
   <action name="actionSave_as">
@@ -121,6 +127,9 @@
   <action name="actionInfo">
    <property name="text">
     <string>Info</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionSave">
@@ -175,6 +184,36 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionredo">
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/Images/redo_icon.png</normaloff>:/Images/redo_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo action</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionCreate_new_table">
+   <property name="icon">
+    <iconset resource="Images.qrc">
+     <normaloff>:/Images/table_icon.png</normaloff>:/Images/table_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create_new_table</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
    </property>
   </action>
  </widget>

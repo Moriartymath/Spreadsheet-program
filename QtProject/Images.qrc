@@ -7,5 +7,7 @@
         <file>Images/zoom_in_icon.png</file>
         <file>Images/zoom_out_icon.png</file>
         <file>Images/undo_icon.png</file>
+        <file>Images/redo_icon.png</file>
+        <file>Images/table_icon.png</file>
     </qresource>
 </RCC>

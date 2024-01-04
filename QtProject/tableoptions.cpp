@@ -7,6 +7,9 @@ TableOptions::TableOptions(QWidget *parent) :
 {
     ui->setupUi(this);
     SetPlaceHolderText();
+    ui->font_size->setToolTip("Font size in pixels");
+    ui->column_count->setToolTip("Column count");
+    ui->row_count->setToolTip("Row count");
 }
 
 TableOptions::~TableOptions()

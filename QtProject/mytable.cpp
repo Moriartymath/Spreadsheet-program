@@ -71,6 +71,7 @@ bool MyTable::CheckNameAvailability(QString sheet_name)
 void MyTable::CreateTable(QStringList &list)
 {
     QTableWidget* widget = new QTableWidget{ui->tabWidget};
+    widget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Stretch);
     connect(widget->itemDelegate(),SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),this,SLOT(SlotCloseEditor(QWidget*)));
     connect(widget->horizontalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(HorizontalSectionDoubleClicked(int)));
     connect(widget->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(VerticalSectionDoubleClicked(int)));
@@ -93,9 +94,7 @@ void MyTable::CreateTable(QStringList &list)
         for (int j = 0; j < widget->columnCount(); ++j) {
             QTableWidgetItem* item = new QTableWidgetItem;
             item->setFont(font);
-            item->setText("hello");
             widget->setItem(i,j,item);
-            item->setText("hello");
         }
     }
     QStringList list_of_info;
@@ -271,6 +270,9 @@ void MyTable::WriteToTable(QStringList &list, const QString& name_of_file,const 
     QStringList Vertical_Headers_Labels;
     QStringList Horizontal_Headers_Labels;
     QTableWidget* widget = new QTableWidget{ui->tabWidget};
+
+    widget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
     connect(widget->itemDelegate(),SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),this,SLOT(SlotCloseEditor(QWidget*)));
     connect(widget->horizontalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(HorizontalSectionDoubleClicked(int)));
     connect(widget->verticalHeader(),SIGNAL(sectionDoubleClicked(int)),this,SLOT(VerticalSectionDoubleClicked(int)));
@@ -415,9 +417,6 @@ void MyTable::WriteToTable(QStringList &list, const QString& name_of_file,const 
     connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
     AddToStack(list_of_file_info,widget);
     ui->tabWidget->addTab(widget,name_of_file);
-
-    qDebug() << Vertical_Headers_Labels;
-    qDebug() << sliced_list;
 }
 
 void MyTable::AddToStack(const QStringList &file_info, QTableWidget *table_widget)
@@ -452,6 +451,117 @@ void MyTable::AddToStack(const QStringList &file_info, QTableWidget *table_widge
 void MyTable::ReverseChanges(int IsReverseDirection)
 {
 
+    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+
+    disconnect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+
+    for (int i = 0; i < stack_list.length(); ++i) {
+
+            if(stack_list[i].second == widget)
+            {
+                QString current_state;
+                if(stack_list[i].first.first.length() == 3)
+                    current_state = stack_list[i].first.first[2];
+                else
+                    current_state = stack_list[i].first.first[3];
+
+                if(IsReverseDirection)
+                {
+                if(current_state.toInt() >= 1)
+                {
+                    int current_state_int = current_state.toInt();
+                    current_state_int--;
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    if(stack_list[i].first.first.length() == 3)
+                        stack_list[i].first.first[2] = current_state;
+                    else
+                        stack_list[i].first.first[3] = current_state;
+                }
+                else
+                {
+                    int current_state_int = current_state.toInt();
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    if(stack_list[i].first.first.length() == 3)
+                        stack_list[i].first.first[2] = current_state;
+                    else
+                        stack_list[i].first.first[3] = current_state;
+                }
+                }
+                else
+                {
+                if(current_state.toInt() < stack_list[i].first.second.length() - 1)
+                {
+                    int current_state_int = current_state.toInt();
+                    current_state_int++;
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    if(stack_list[i].first.first.length() == 3)
+                        stack_list[i].first.first[2] = current_state;
+                    else
+                        stack_list[i].first.first[3] = current_state;
+                }
+                else
+                {
+                    int current_state_int = current_state.toInt();
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    if(stack_list[i].first.first.length() == 3)
+                        stack_list[i].first.first[2] = current_state;
+                    else
+                        stack_list[i].first.first[3] = current_state;
+                }
+
+                }
+                int column_count = widget->columnCount();
+                QList<QTableWidgetItem*> temporary_list;
+
+                int row_index = 0;
+                bool if_break_statement = false;
+
+                for (const auto& item: stack_list[i].first.second[current_state.toInt()]) {
+
+                    if (row_index >= widget->rowCount())
+                        break;
+                    while (temporary_list.length() != column_count) {
+
+                        temporary_list.append(item);
+
+                        if_break_statement = true;
+                        break;
+                    }
+
+                    if(temporary_list.length() == column_count)
+                        if_break_statement = false;
+
+                    if(!if_break_statement){
+
+                        int column_index = 0;
+                        for (const auto& inner_item : temporary_list) {
+
+                           QTableWidgetItem* item_to_change = widget->item(row_index,column_index);
+
+                           item_to_change->setText(inner_item->text());
+                           //item_to_change->setFont(inner_item->font());
+                           column_index++;
+                        }
+
+                        temporary_list.clear();
+                        row_index++;
+                    }
+                }
+
+                break;
+            }
+    }
+
+     widget->horizontalHeader()->setFont(widget->item(0,0)->font());
+     widget->verticalHeader()->setFont(widget->item(0,0)->font());
+     //widget->resizeColumnsToContents();
+     //widget->resizeRowsToContents();
+
+    connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
 }
 
 void MyTable::writeToTxtFile(const QString &path_to_file) const
@@ -726,7 +836,7 @@ void MyTable::CurrentTabChanged(int tab_index)
 
 void MyTable::ItemChanged(QTableWidgetItem *item)
 {
-    qDebug() << "hello";
+    qDebug() << "item changed";
     QTableWidget* current_changed_table = item->tableWidget();
     for (int i = 0; i < stack_list.length(); ++i) {
         if(stack_list[i].second == current_changed_table)
@@ -742,8 +852,6 @@ void MyTable::ItemChanged(QTableWidgetItem *item)
                     current_state.clear();
                     current_state.setNum(current_state_int);
                     stack_list[i].first.first[2] = current_state;
-
-                    qDebug() << stack_list[i].first.first[2];
                 }
                 else
                 {
@@ -784,9 +892,6 @@ void MyTable::ItemChanged(QTableWidgetItem *item)
         }
     }
 
-
-    qDebug() << "iTEM CHANGED";
-
 }
 
 void MyTable::RecieveInputData(QStringList list)
@@ -807,6 +912,9 @@ void MyTable::on_actionQuit_triggered()
 void MyTable::CloseMyTab(int indexTab)
 {
     ui->tabWidget->removeTab(indexTab);
+    if(!ui->tabWidget->count())
+         setWindowTitle(window_title);
+    line_edit_for_status_bar->setText("");
 }
 
 void MyTable::on_actionInfo_triggered()
@@ -874,105 +982,17 @@ void MyTable::on_actionOpen_File_triggered()
 
 void MyTable::on_action_undo_triggered()
 {
-    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+    ReverseChanges(true);
+}
 
-    disconnect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
-
-    for (int i = 0; i < stack_list.length(); ++i) {
-
-         if(stack_list[i].second == widget)
-         {
-            QString current_state;
-            if(stack_list[i].first.first.length() == 3)
-                    current_state = stack_list[i].first.first[2];
-            else
-                    current_state = stack_list[i].first.first[3];
-
-            if(current_state.toInt() >= 1)
-            {
-                    int current_state_int = current_state.toInt();
-                    current_state_int--;
-                    current_state.clear();
-                    current_state.setNum(current_state_int);
-                    if(stack_list[i].first.first.length() == 3)
-                         stack_list[i].first.first[2] = current_state;
-                    else
-                        stack_list[i].first.first[3] = current_state;
-            }
-            else
-            {
-                    int current_state_int = current_state.toInt();
-                    current_state.clear();
-                    current_state.setNum(current_state_int);
-                    if(stack_list[i].first.first.length() == 3)
-                        stack_list[i].first.first[2] = current_state;
-                    else
-                        stack_list[i].first.first[3] = current_state;
-            }
-
-            int column_count = widget->columnCount();
-            QList<QTableWidgetItem*> temporary_list;
-
-            int row_index = 0;
-            bool if_break_statement = false;
-
-            for (const auto& item: stack_list[i].first.second[current_state.toInt()]) {
-
-                    if (row_index >= widget->rowCount())
-                        break;
-                    while (temporary_list.length() != column_count) {
-
-                        temporary_list.append(item);
-
-                        if_break_statement = true;
-                        break;
-                    }
-
-                    if(temporary_list.length() == column_count)
-                        if_break_statement = false;
-
-                    if(!if_break_statement){
-
-                    int column_index = 0;
-                    for (const auto& inner_item : temporary_list) {
-
-                        QTableWidgetItem* item_to_change = widget->item(row_index,column_index);
-
-                        item_to_change->setText(inner_item->text());
-                        item_to_change->setFont(inner_item->font());
-                        column_index++;
-                    }
-
-                    temporary_list.clear();
-                    row_index++;
-                    }
-            }
-
-
-         }
-    }
-
-    connect(widget,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(ItemChanged(QTableWidgetItem*)));
+void MyTable::on_actionredo_triggered()
+{
+    ReverseChanges(false);
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void MyTable::on_actionCreate_new_table_triggered()
+{
+    HandleRightClick();
+}
 
