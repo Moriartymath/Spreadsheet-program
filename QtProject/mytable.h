@@ -37,6 +37,7 @@ private:
     QString FindLongestVerticalHeader() const;
     void EnterNewName(QString& sheet_name);
     void AddToStack(const QStringList& file_info,QTableWidget* table_widget);
+    void ReverseChanges(int IsReverseDirection)
 
 
 public slots:

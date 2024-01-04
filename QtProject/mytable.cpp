@@ -19,7 +19,7 @@ MyTable::MyTable(QWidget *parent)
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(CloseMyTab(int)));
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(CurrentTabChanged(int)));
 
-    line_edit_for_status_bar->setText("Hello");
+    //line_edit_for_status_bar->setText("Hello");
     line_edit_for_status_bar->setAlignment(Qt::AlignmentFlag::AlignCenter);
     line_edit_for_status_bar->setModified(false);
     ui->statusbar->addPermanentWidget(line_edit_for_status_bar,3);
@@ -449,6 +449,11 @@ void MyTable::AddToStack(const QStringList &file_info, QTableWidget *table_widge
 
 }
 
+void MyTable::ReverseChanges(int IsReverseDirection)
+{
+
+}
+
 void MyTable::writeToTxtFile(const QString &path_to_file) const
 {
     QFile file{path_to_file};
@@ -744,14 +749,21 @@ void MyTable::ItemChanged(QTableWidgetItem *item)
                 {
                     stack_list[i].first.first[2] = "Unsaved Changes";
                     current_state = stack_list[i].first.first[3];
+
                     current_state_int = current_state.toInt();
                     current_state_int++;
+
+                    if(stack_list[i].first.second.length() - 1 > current_state_int)
+                        current_state_int = stack_list[i].first.second.length();
+
+
                     current_state.clear();
                     current_state.setNum(current_state_int);
                     stack_list[i].first.first[3] = current_state;
 
                     qDebug() << stack_list[i].first.first[3];
                 }
+                line_edit_for_status_bar->setText("Unsaved Changes");
 
             QList<QTableWidgetItem*> list_of_new_items;
 
@@ -772,11 +784,8 @@ void MyTable::ItemChanged(QTableWidgetItem *item)
         }
     }
 
-    for (const auto& item : stack_list[0].first.second) {
-        for (const auto& inner_item : item) {
-            qDebug() << inner_item->text();
-        }
-    }
+
+    qDebug() << "iTEM CHANGED";
 
 }
 
@@ -832,6 +841,24 @@ void MyTable::on_actionSave_as_triggered()
 
 void MyTable::on_actionSave_triggered()
 {
+    QTableWidget* widget = static_cast<QTableWidget*>(ui->tabWidget->currentWidget());
+
+
+    for (int i = 0; i < stack_list.length(); ++i) {
+
+         if(stack_list[i].second == widget)
+         {
+            if(stack_list[i].first.first.length() == 4)
+            {
+                QString path_to_file  = stack_list[i].first.first[1];
+                writeToTxtFile(path_to_file);
+                stack_list[i].first.first[2] = "Saved";
+                line_edit_for_status_bar->setText("Saved");
+            }
+
+         }
+    }
+
 
 }
 
@@ -874,7 +901,13 @@ void MyTable::on_action_undo_triggered()
             }
             else
             {
-                return;
+                    int current_state_int = current_state.toInt();
+                    current_state.clear();
+                    current_state.setNum(current_state_int);
+                    if(stack_list[i].first.first.length() == 3)
+                        stack_list[i].first.first[2] = current_state;
+                    else
+                        stack_list[i].first.first[3] = current_state;
             }
 
             int column_count = widget->columnCount();
@@ -897,6 +930,7 @@ void MyTable::on_action_undo_triggered()
 
                     if(temporary_list.length() == column_count)
                         if_break_statement = false;
+
                     if(!if_break_statement){
 
                     int column_index = 0;
