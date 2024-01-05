@@ -19,7 +19,6 @@ MyTable::MyTable(QWidget *parent)
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(CloseMyTab(int)));
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(CurrentTabChanged(int)));
 
-    //line_edit_for_status_bar->setText("Hello");
     line_edit_for_status_bar->setAlignment(Qt::AlignmentFlag::AlignCenter);
     line_edit_for_status_bar->setModified(false);
     ui->statusbar->addPermanentWidget(line_edit_for_status_bar,3);
@@ -31,7 +30,6 @@ void MyTable::mousePressEvent(QMouseEvent *eventPress)
     {
         HandleRightClick();
     }
-
 }
 
 MyTable::~MyTable()
@@ -825,7 +823,6 @@ void MyTable::CurrentTabChanged(int tab_index)
                 break;
         }
     }
-    QTableWidgetItem item;
 
 
     if(!IsWindowTitleChanged)

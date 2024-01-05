@@ -89,6 +89,7 @@
    </attribute>
    <addaction name="actionOpen_File"/>
    <addaction name="actionSave_as"/>
+   <addaction name="actionSave"/>
    <addaction name="actionCreate_new_table"/>
    <addaction name="actionZoom_in"/>
    <addaction name="actionZoom_out"/>

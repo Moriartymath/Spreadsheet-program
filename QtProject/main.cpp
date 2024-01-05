@@ -1,6 +1,5 @@
 #include "mytable.h"
 #include "tableoptions.h"
-
 #include <QApplication>
 
 int main(int argc, char *argv[])
