@@ -28,7 +28,9 @@
 ![](./Application%20screen%20examples/zoom_in.png)
 ![](./Application%20screen%20examples/zoom_out.png)
 ![](./Application%20screen%20examples/menu_bar.png)
+## Menu "Info" is leading to project repository
 ![](./Application%20screen%20examples/menu_info.png)
 ![](./Application%20screen%20examples/menu_File.png)
+![](./Application%20screen%20examples/menu_Quit.png)
 ![](./Application%20screen%20examples/tool_bar.png)
 
